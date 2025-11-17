@@ -1,5 +1,6 @@
 package com.red_nosed_reports.logic;
 
+import java.util.Objects;
 import java.util.AbstractList;
 import java.util.ArrayList;
 
@@ -7,6 +8,7 @@ import java.util.ArrayList;
  * Represents a report (list of integers)
  */
 public class Report {
+
     private AbstractList<Integer> levels;
 
     /**
@@ -58,10 +60,7 @@ public class Report {
             int diff = this.levels.get(k - 1) - this.levels.get(k);
 
             if (k == 1) { // First pass in the loop, set the direction (increasing / decreasing)
-                if (diff <= 0)
-                    increasing = true;
-                else
-                    increasing = false;
+                increasing = (diff <= 0);
             }
             else { // Check if the direction stays the same
                 if (increasing && diff > 0)
@@ -89,6 +88,29 @@ public class Report {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+
+        if (other == null || this.getClass() != other.getClass())
+            return false;
+
+        Report otherReport = (Report) other;
+        
+        return Objects.equals(this.levels, otherReport.levels);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.levels);
+    }
+
+    @Override
+    public String toString() {
+        return this.levels.toString();
     }
 }
 

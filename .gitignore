@@ -1,7 +1,6 @@
 bin/
 build/
 *.class
-*.jar
 
 data/
 

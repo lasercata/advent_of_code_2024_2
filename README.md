@@ -1,5 +1,7 @@
 # Red-Nosed Reports (advent of code #2 2024)
 
+[![Java CI](https://github.com/lasercata/advent_of_code_2024_2/actions/workflows/java-tests.yml/badge.svg)](https://github.com/lasercata/advent_of_code_2024_2/actions/workflows/java-tests.yml)
+
 This repository contains my solution to the [challenge #2 of the 2024 Advent of Code](https://adventofcode.com/2024/day/2), written in Java.
 
 ## Prerequisites

@@ -1,11 +1,11 @@
 plugins {
-    // id 'java'
-    id 'application'
+    id 'java'
+    // id 'application'
 }
 
-application {
-    mainClass = 'com.red_nosed_reports.main.MainRedNosedReports'
-}
+// application {
+//     mainClass = 'com.red_nosed_reports.main.MainRedNosedReports'
+// }
 
 group = 'com.red_nosed_reports'
 version = '1.0-SNAPSHOT'
@@ -15,7 +15,13 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.13.2'
+    // testImplementation 'junit:junit:4.13.2'
+
+    testImplementation('org.junit.jupiter:junit-jupiter:5.8.2')
+    testImplementation('org.junit.platform:junit-platform-launcher:1.9.1')
+
+    // testImplementation platform('org.junit:junit-bom:5.10.0')
+    // testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
 test {

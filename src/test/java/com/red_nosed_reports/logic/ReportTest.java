@@ -25,12 +25,34 @@ public class ReportTest {
     }
 
     @Test
-    void testAddLevel() {
+    void testAddAndRemoveLevel() {
         report.addLevel(0);
         assertEquals(Arrays.asList(0), report.getLevels());
 
         report.addLevel(100);
         assertEquals(Arrays.asList(0, 100), report.getLevels());
+
+        report.addLevel(50);
+        assertEquals(Arrays.asList(0, 100, 50), report.getLevels());
+
+        report.removeLevel(1);
+        assertEquals(Arrays.asList(0, 50), report.getLevels());
+
+        report.removeLevel(1);
+        assertEquals(Arrays.asList(0), report.getLevels());
+
+        report.addLevel(1);
+        report.addLevel(2);
+        report.addLevel(3);
+        report.addLevel(4);
+        report.addLevel(5);
+        assertEquals(Arrays.asList(0, 1, 2, 3, 4, 5), report.getLevels());
+
+        report.removeLevel(5);
+        assertEquals(Arrays.asList(0, 1, 2, 3, 4), report.getLevels());
+
+        report.removeLevel(3);
+        assertEquals(Arrays.asList(0, 1, 2, 4), report.getLevels());
     }
 
     @ParameterizedTest
@@ -52,9 +74,14 @@ public class ReportTest {
         listOfArguments.add(Arguments.of(Arrays.asList(7, 6, 4, 2, 1), true));
         listOfArguments.add(Arguments.of(Arrays.asList(1, 2, 7, 8, 9), false));
         listOfArguments.add(Arguments.of(Arrays.asList(9, 7, 6, 2, 1), false));
-        listOfArguments.add(Arguments.of(Arrays.asList(1, 3, 2, 4, 5), false));
-        listOfArguments.add(Arguments.of(Arrays.asList(8, 6, 4, 4, 1), false));
+        listOfArguments.add(Arguments.of(Arrays.asList(1, 3, 2, 4, 5), true)); // part1: false
+        listOfArguments.add(Arguments.of(Arrays.asList(8, 6, 4, 4, 1), true)); // part1: false
         listOfArguments.add(Arguments.of(Arrays.asList(1, 3, 6, 7, 9), true));
+
+        listOfArguments.add(Arguments.of(Arrays.asList(5, 8, 10, 10, 12, 9), false));
+        listOfArguments.add(Arguments.of(Arrays.asList(58, 59, 60, 59, 60), false));
+        listOfArguments.add(Arguments.of(Arrays.asList(9, 13, 11, 13, 15), true));
+        listOfArguments.add(Arguments.of(Arrays.asList(20, 23, 20, 18, 15), true));
 
         return listOfArguments.stream();
     }

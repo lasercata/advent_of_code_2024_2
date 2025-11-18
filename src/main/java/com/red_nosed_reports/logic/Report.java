@@ -21,12 +21,30 @@ public class Report {
     }
 
     /**
+     * Creates a new Report instance.
+     *
+     * @return A new Report instance
+     */
+    public Report(AbstractList<Integer> levels) {
+        this.levels = levels;
+    }
+
+    /**
      * Adds `level` to the report.
      *
      * @param level The level to add to the report
      */
     public void addLevel(int level) {
         this.levels.add(level);
+    }
+
+    /**
+     * Removes the level at index `k`
+     *
+     * @param k The index at which to remove the level
+     */
+    public void removeLevel(int k) {
+        this.levels.remove(k);
     }
 
     /**
@@ -44,29 +62,65 @@ public class Report {
      * @return true if and only if the report is safe.
      */
     public boolean isSafe() {
-        return this.areValuesMonotonous() && this.areIntervalCorrect();
+        return this.isSafe(true);
+    }
+
+    /**
+     * Determines if the report is safe.
+     * Defined to hide the parameter.
+     *
+     * @param allowSkip Set to true when calling, used to allow to skip at most one value (only one recurrence). This argument is necessary here to synchronise both sub-methods.
+     * @return true if and only if the report is safe.
+     */
+    private boolean isSafe(boolean allowSkip) {
+        // If there is only one level, do not skip it
+        if (this.levels.size() == 1)
+            allowSkip = false;
+
+        // Proceed with the case where removing the first level makes it safe
+        Report reportWithout0 = new Report(new ArrayList<>(this.levels));
+        reportWithout0.removeLevel(0);
+
+        if (allowSkip && reportWithout0.isSafe(false))
+            return true;
+
+        // Proceed to the specific checks
+        return this.areValuesMonotonous(allowSkip) && this.areIntervalCorrect(allowSkip);
     }
 
     /**
      * Checks the first condition for the report to be safe:
      * are the levels either all increasing or all decreasing?
+     * It is possible to skip one level (part2).
      *
+     * @param allowSkip Set to true when calling, used to allow to skip at most one value (only one recurrence)
      * @return true if and only if the condition is verified
      */
-    private boolean areValuesMonotonous() {
+    private boolean areValuesMonotonous(boolean allowSkip) {
         boolean increasing = true;
 
         for (int k = 1; k < this.levels.size(); ++k) {
             int diff = this.levels.get(k - 1) - this.levels.get(k);
 
-            if (k == 1) { // First pass in the loop, set the direction (increasing / decreasing)
+            // First pass in the loop, set the direction (increasing / decreasing)
+            if (k == 1) {
                 increasing = (diff <= 0);
             }
-            else { // Check if the direction stays the same
-                if (increasing && diff > 0)
-                    return false;
-                if (!increasing && diff < 0)
-                    return false;
+            // Check if the direction stays the same
+            else if ((increasing && diff > 0) || (!increasing && diff < 0)) {
+                // If not, check if it can work by removing the wrong level (either k or k - 1)
+                if (allowSkip) {
+                    Report reportWithoutK = new Report(new ArrayList<>(this.levels));
+                    reportWithoutK.removeLevel(k);
+
+                    Report reportWithoutK1 = new Report(new ArrayList<>(this.levels));
+                    reportWithoutK1.removeLevel(k - 1);
+
+                    if (reportWithoutK.isSafe(false) || reportWithoutK1.isSafe(false))
+                        return true;
+                }
+
+                return false;
             }
         }
 
@@ -76,18 +130,32 @@ public class Report {
     /**
      * Checks the second condition for the report to be safe:
      * does any two adjacent levels differ by at least one and at most three?
+     * It is possible to skip one level (part2).
      *
+     * @param allowSkip Set to true when calling, used to allow to skip at most one value (only one recurrence)
      * @return true if and only if the condition is verified
      */
-    private boolean areIntervalCorrect() {
+    private boolean areIntervalCorrect(boolean allowSkip) {
         for (int k = 1; k < this.levels.size(); ++k) {
             int diff = Math.abs(this.levels.get(k - 1) - this.levels.get(k));
 
-            if (diff < 1 || 3 < diff)
+            if (diff < 1 || 3 < diff) {
+                if (allowSkip) { // If the interval is not correct, check if it can work by removing the wrong level (either k or k - 1)
+                    Report reportWithoutK = new Report(new ArrayList<>(this.levels));
+                    reportWithoutK.removeLevel(k);
+
+                    Report reportWithoutK1 = new Report(new ArrayList<>(this.levels));
+                    reportWithoutK1.removeLevel(k - 1);
+
+                    if (reportWithoutK.isSafe(false) || reportWithoutK1.isSafe(false))
+                        return true;
+                }
+
                 return false;
+            }
         }
 
-        return true;
+        return true; // All intervals are correct
     }
 
     @Override
